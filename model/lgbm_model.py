@@ -8,13 +8,12 @@ import pickle
 x = np.load('./npy/all_scale_x.npy')
 y = np.load('./npy/all_scale_y.npy')
 x_predict = np.load('./npy/mag_tmp.npy')
+print(x.shape)
 
 x_predict = x_predict.reshape(1, x_predict.shape[0])
 
 x_train, x_test ,y_train , y_test= train_test_split(x, y, train_size = 0.6)
 x_val, x_test ,y_val , y_test= train_test_split(x_test, y_test, train_size = 0.5)
-
-
 
 print(y)
 model = LGBMClassifier(n_jobs=-1,
