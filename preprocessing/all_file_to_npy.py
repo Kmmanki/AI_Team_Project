@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 FIG_SIZE = (8,6)
 
+SR = 11025
+
 def search(dirname):
     x_arr = []
     y_arr = []
@@ -13,12 +15,12 @@ def search(dirname):
     for filename in filenames:
         y_label = int(filename.split('-')[-2])
         if y_label < 48 or 84 < y_label:
-            print(y_label)
+            # print(y_label)
             continue
         full_filename = os.path.join(dirname, filename)
         full_filename = full_filename.replace('\\', '/')
         
-        sig, sr = librosa.load(full_filename, sr=22050)
+        sig, sr = librosa.load(full_filename, sr=SR, offset=1.0)
 
         # print(sig,sig.shape)
 
@@ -86,14 +88,14 @@ def search(dirname):
         # plt.show()
         # print (y_label)
 
-    return np.array(x_arr), np.array(y_arr)
+    return np.array(x_arr), np.array(y_arr), i
 
 
-x, y = search('D:/teamprojectDataset/nsynth-valid/audio')
+x, y, i = search('D:/teamprojectDataset/nsynth-valid/audio')
 # y = y.astype('int64')
 
 print(np.unique(y))
 print(len(np.unique(y)))
-
-np.save('./npy/all_scale_x.npy', arr=x)
-np.save('./npy/all_scale_y.npy', arr=y)
+print(i,'개 파일')
+np.save('./npy/all_scale_x_11025sr.npy', arr=x)
+np.save('./npy/all_scale_y_11025sr.npy', arr=y)
