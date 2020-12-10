@@ -8,8 +8,12 @@ RATE = 44100
 SR = 44100
 OFFSET = 48
 MIDI_NUMS = [i for i in range(48,85)]
-MODEL = pickle.load(open('./model/modelLoad/modelFolder/lgbm.dat', 'rb'))
+MODEL = pickle.load(open('./model/modelLoad/modelFolder/lgbm_11025sr.dat', 'rb'))
 SCALE = ['C','D','E', 'F', 'G', 'A', 'B']
+
+def convertFregToPitch(arr):
+    return np.round(39.86*np.log10(arr/440.0) + 69.0) #수 많은 소수점 들을 하나로 합치게 해줌. Ex 130.8 130.9 130.10 을 전부 130 => 48로 단일화 즉 값들이 48로 몰링
+convertFregToPitch2 = np.vectorize(convertFregToPitch)
 
 def transe2(y):
     tmp = (int(y) - OFFSET) % 12
@@ -59,16 +63,6 @@ def preprocessing(data):
     pitch_freq = left_f[pitch_index] #x축 
     pitch_mag = left_spectrum[pitch_index] #y축
 
-    # plt.figure(figsize=(16,10))
-    # plt.xlim([0,500])
-    # plt.ylim([-100,100])
-    # plt.plot(left_f,left_spectrum)
-    # plt.savefig('./03.png')
-
-    def convertFregToPitch(arr):
-            return np.round(39.86*np.log10(arr/440.0) + 69.0) #수 많은 소수점 들을 하나로 합치게 해줌. Ex 130.8 130.9 130.10 을 전부 130 => 48로 단일화 즉 값들이 48로 몰링
-    convertFregToPitch2 = np.vectorize(convertFregToPitch)
-
     pitch_freq = convertFregToPitch2(pitch_freq)
 
     start_index = np.where(pitch_freq>=48)
@@ -82,17 +76,9 @@ def preprocessing(data):
         tmp_avg = np.average(pitch_mag[np.where(pitch_freq == freq_uniq[i])]) # 48을 가진 index 들을 모두 가져와서 avg
         tmp_arr.append(tmp_avg)
 
-
-    # plt.figure(figsize=(16,10))
-    # # plt.xlim([0,500])
-    # # plt.ylim([-100,100])
-    # # plt.plot(left_f,left_spectrum)
-    # plt.plot(MIDI_NUMS,tmp_arr)
-    # plt.savefig('./03.png', dpi=50)
-
-
-
-    if max(pitch_mag) < 10:
+    #백색소음일 때의 파워 값은 대략 8 내외 8보다 작으면 소리 입력이 없는 것으로 판단.
+    #소리가 있다면 predict
+    if max(pitch_mag) < 8:
         result = np.array(tmp_arr)
         return result, False
     else:
@@ -101,9 +87,6 @@ def preprocessing(data):
         return result, True
 
 
-p=pyaudio.PyAudio()
-stream=p.open(format=pyaudio.paFloat32,channels=1,rate=RATE,input=True,
-              frames_per_buffer=CHUNK)
  
     # plt.figure(figsize=(16,10))
     # plt.xlim([0,6])
@@ -114,6 +97,11 @@ stream=p.open(format=pyaudio.paFloat32,channels=1,rate=RATE,input=True,
     # print("한 번 출력까지 걸린 시간 : ",datetime.datetime.now() - start_time)
 
 if __name__ == '__main__':
+    
+    p=pyaudio.PyAudio()
+    stream=p.open(format=pyaudio.paFloat32,channels=1,rate=RATE,input=True,
+        frames_per_buffer=CHUNK)
+    
     while(True):
         start_time = datetime.datetime.now()
         data = np.frombuffer(stream.read(CHUNK),dtype=np.float32)
@@ -126,7 +114,6 @@ if __name__ == '__main__':
             print()
         else:
             print('소리 없음')
-    print('aaa')
     stream.stop_stream()
     stream.close()
     p.terminate()

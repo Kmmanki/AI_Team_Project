@@ -19,9 +19,10 @@ RATE = 44100
 SR = 44100
 OFFSET = 48
 MIDI_NUMS = [i for i in range(48,85)]
-MODEL = pickle.load(open('./model/modelLoad/modelFolder/lgbm.dat', 'rb'))
+MODEL = pickle.load(open('./model/modelLoad/modelFolder/lgbm_11025sr.dat', 'rb'))
 SCALE = ['C','D','E', 'F', 'G', 'A', 'B']
 
+#오디오 스트림 생성
 p=pyaudio.PyAudio()
 stream=p.open(format=pyaudio.paFloat32,channels=1,rate=RATE,input=True,
               frames_per_buffer=CHUNK)
@@ -52,9 +53,14 @@ def main():
     while True:
         screen.fill((255, 255, 255))
         start_time = datetime.datetime.now()
+
+        #오디오 스트림을 청크단위로 읽기
         data = np.frombuffer(stream.read(CHUNK),dtype=np.float32)
+        
         print("stream 걸린 시간 : ",datetime.datetime.now() - start_time)
-        pre_data, is_sound  = live_to_scale.preprocessing(data)
+        
+        #predidct를 위한 전처리
+        x_predict, is_sound  = live_to_scale.preprocessing(data)
  
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -65,9 +71,9 @@ def main():
             #         is_go_up = True
             #         is_bottom = False
 
-        print(is_sound)
+        # 백색소음이 아니라면 점프!
         if is_sound:
-            y_predict = MODEL.predict(pre_data)
+            y_predict = MODEL.predict(x_predict)
             result = live_to_scale.transe(y_predict)
             print(result)
             if result == '미':
