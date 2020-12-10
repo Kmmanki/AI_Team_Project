@@ -6,27 +6,33 @@ import pandas as pd
 FIG_SIZE = (8,6)
 
 SR = 11025
+def convertFregToPitch(arr):
+    return np.round(39.86*np.log10(arr/440.0) + 69.0) #수 많은 소수점 들을 하나로 합치게 해줌. Ex 130.8 130.9 130.10 을 전부 130 => 48로 단일화 즉 값들이 48로 몰링
+convertFregToPitch2 = np.vectorize(convertFregToPitch)
 
 def search(dirname):
     x_arr = []
     y_arr = []
-    i = 0
+    num = 0
+
+    #입력받은 디렉토리의 모든 파일을 불러온다.
     filenames = os.listdir(dirname)
     for filename in filenames:
+
+        #midi 라벨링, 파일 이름에서 추출        
         y_label = int(filename.split('-')[-2])
+
+        #사람이 낼 수 있는 음역대로 판단한 48번 ~ 84번만 npy로 작성
         if y_label < 48 or 84 < y_label:
-            # print(y_label)
             continue
         full_filename = os.path.join(dirname, filename)
         full_filename = full_filename.replace('\\', '/')
         
+        #리브로사를 사용하여 wav를 로드, 시작 1초간 소리가 없기 때문에 1초 후부터 시작 
         sig, sr = librosa.load(full_filename, sr=SR, offset=1.0)
 
-        # print(sig,sig.shape)
-
-        fft = np.fft.fft(sig)
-
         # 복소공간 값 절댓갑 취해서, magnitude 구하기
+        fft = np.fft.fft(sig)
         magnitude = np.abs(fft) 
 
         # Frequency 값 만들기
@@ -36,42 +42,32 @@ def search(dirname):
         left_spectrum = magnitude[:int(len(magnitude)/2)]
         left_f = f[:int(len(magnitude)/2)]
 
+        # 불필요한 hz가 많기 때문에 48번의 hz = 130 ~ 84번 hz 1050 데이터만 사용
         # print(left_spectrum.shape) #108427
-        # 기존의 hz는 너무 크다 줄인다. 
         pitch_index = np.where((left_f > 130.0) & (left_f < 1050.0)) #130 ~ 1050 헤르츠의 index 구함
+        pitch_freq = left_f[pitch_index] 
+        pitch_mag = left_spectrum[pitch_index] 
         # print(left_spectrum.shape) # 9000컬럼
-        # print(left_f.shape)
 
-        pitch_freq = left_f[pitch_index] #x축 
-        pitch_mag = left_spectrum[pitch_index] #y축 
-
-        def convertFregToPitch(arr):
-            return np.round(39.86*np.log10(arr/440.0) + 69.0) #수 많은 소수점 들을 하나로 합치게 해줌. Ex 130.8 130.9 130.10 을 전부 130 => 48로 단일화 즉 값들이 48로 몰링
-        convertFregToPitch2 = np.vectorize(convertFregToPitch)
-
+        #주파수를 midi번호로 변경 Ex) 130.0 -> 48
         pitch_freq = convertFregToPitch2(pitch_freq)
 
+        # 다시 48번 midi부터 84번 midi까지 슬라이싱
         start_index = np.where(pitch_freq>=48)
-        # print("start_index:",start_index)
         pitch_freq = pitch_freq[start_index]
         pitch_mag = pitch_mag[start_index]
 
-        # print(pitch_freq)
-        # print(pitch_mag)
-        # print("pitch_freq.shape:",pitch_freq.shape)
-        # print("pitch_mag.shape:",pitch_mag.shape)
 
-        freq_uniq = np.unique(pitch_freq) #여러 미디번호들이 있지만 유니크로 보여주며 유니크 이전엔 48 48 48 48 48 48 48 이런식으로 있을 것이고 해당 인덱스로 주면 mag를 얻는다.
-        #mag들의 합을 얻으면 가장 큰 mag를 얻을 수 있다.
-        # print(freq_uniq[0]) #대략 미디번호 48 ~ 84까지 있을 거다  # 130 hz ~ 1050 hz 까지 잘랐으니
+        #여러 미디번호들이 있지만 유니크로 보여주며 유니크 이전엔 48 48 48 48 48 48 48 이런식으로 있을 것이고 해당 인덱스로 주면 mag를 얻는다.
+        freq_uniq = np.unique(pitch_freq) 
 
+        #y 값을 평균으로 미디번호를 단일화
         tmp_arr = []
         for i in range(len(freq_uniq)):
             # print(freq_uniq[i])
-            tmp_avg = np.average(pitch_mag[np.where(pitch_freq == freq_uniq[i])]) # 48을 가진 index 들을 모두 가져와서 avg
+            tmp_avg = np.average(pitch_mag[np.where(pitch_freq == freq_uniq[i])]) 
             tmp_arr.append(tmp_avg)
-        # print(tmp_arr)
-        #x 축은 unique 값이지.. x = tmparr y = 가운데 번호
+
         x_arr.append(tmp_arr)
         y_arr.append(y_label)
         
@@ -87,15 +83,13 @@ def search(dirname):
         # plt.title("Power spectrum"+ n[-3:])
         # plt.show()
         # print (y_label)
+        num += 1
+        if num %10 == 0:
+            print(str(num)+'번째 파일')
+    return np.array(x_arr), np.array(y_arr)
 
-    return np.array(x_arr), np.array(y_arr), i
 
+x, y = search('D:/teamprojectDataset/nsynth-valid/audio')
 
-x, y, i = search('D:/teamprojectDataset/nsynth-valid/audio')
-# y = y.astype('int64')
-
-print(np.unique(y))
-print(len(np.unique(y)))
-print(i,'개 파일')
 np.save('./npy/all_scale_x_11025sr.npy', arr=x)
 np.save('./npy/all_scale_y_11025sr.npy', arr=y)
