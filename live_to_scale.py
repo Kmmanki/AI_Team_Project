@@ -59,6 +59,7 @@ def preprocessing(data):
     f = np.linspace(0,SR,len(magnitude)) 
     left_spectrum = magnitude[:int(len(magnitude)/2)]
     left_f = f[:int(len(magnitude)/2)]
+
     pitch_index = np.where((left_f > 130.0) & (left_f < 1050.0)) #130 ~ 1050 헤르츠의 index 구함
     pitch_freq = left_f[pitch_index] #x축 
     pitch_mag = left_spectrum[pitch_index] #y축
@@ -68,6 +69,7 @@ def preprocessing(data):
     start_index = np.where(pitch_freq>=48)
     pitch_freq = pitch_freq[start_index]
     pitch_mag = pitch_mag[start_index]
+    
     freq_uniq = np.unique(pitch_freq)
 
 
@@ -78,7 +80,7 @@ def preprocessing(data):
 
     #백색소음일 때의 파워 값은 대략 8 내외 8보다 작으면 소리 입력이 없는 것으로 판단.
     #소리가 있다면 predict
-    if max(pitch_mag) < 8:
+    if max(pitch_mag) < 15:
         result = np.array(tmp_arr)
         return result, False
     else:
@@ -97,7 +99,7 @@ def preprocessing(data):
     # print("한 번 출력까지 걸린 시간 : ",datetime.datetime.now() - start_time)
 
 if __name__ == '__main__':
-    
+
     p=pyaudio.PyAudio()
     stream=p.open(format=pyaudio.paFloat32,channels=1,rate=RATE,input=True,
         frames_per_buffer=CHUNK)

@@ -9,7 +9,7 @@ x = np.load('./npy/all_scale_x_11025sr.npy')
 y = np.load('./npy/all_scale_y_11025sr.npy')
 x_predict = np.load('./npy/mag_tmp.npy')
 
-
+print(x.shape)
 
 x_predict = x_predict.reshape(1, x_predict.shape[0])
 
@@ -24,7 +24,7 @@ model = LGBMClassifier(n_jobs=-1,
 
 start_time = datetime.datetime.now()
 model.fit(x_train, y_train, early_stopping_rounds=40,
-            eval_set=(x_val, y_val),
+            eval_set=[(x_val, y_val)],
             # verbose=True
             )
 end_time = datetime.datetime.now()
