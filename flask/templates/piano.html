@@ -1,0 +1,218 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <link href="/static/build/styles/samples.37902ba3b7fe.css" rel="stylesheet" type="text/css">
+
+  <style type="text/css">
+    .container {
+      overflow-x: scroll;
+      overflow-y: hidden;
+      width: 660px;
+      height: 110px;
+      white-space: nowrap;
+      margin: 10px;
+    }
+
+    .keyboard {
+      width: auto;
+      padding: 0;
+      margin: 0;
+    }
+
+    .key {
+      cursor: pointer;
+      font: 16px "Open Sans", "Lucida Grande", "Arial", sans-serif;
+      border: 1px solid black;
+      border-radius: 5px;
+      width: 20px;
+      height: 80px;
+      text-align: center;
+      box-shadow: 2px 2px darkgray;
+      display: inline-block;
+      position: relative;
+      margin-right: 3px;
+      user-select: none;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
+
+    .key div {
+      position: absolute;
+      bottom: 0;
+      text-align: center;
+      width: 100%;
+      pointer-events: none;
+    }
+
+    .key div sub {
+      font-size: 10px;
+      pointer-events: none;
+    }
+
+    .key:hover {
+      background-color: #eef;
+    }
+
+    .key:active {
+      background-color: #000;
+      color: #fff;
+    }
+
+    .octave {
+      display: inline-block;
+      padding: 0 6px 0 0;
+    }
+
+    .settingsBar {
+      padding-top: 8px;
+      font: 14px "Open Sans", "Lucida Grande", "Arial", sans-serif;
+      position: relative;
+      vertical-align: middle;
+      width: 100%;
+      height: 30px;
+    }
+
+    .left {
+      width: 50%;
+      position: absolute;
+      left: 0;
+      display: table-cell;
+      vertical-align: middle;
+    }
+
+    .left span,
+    .left input {
+      vertical-align: middle;
+    }
+
+    .right {
+      width: 50%;
+      position: absolute;
+      right: 0;
+      display: table-cell;
+      vertical-align: middle;
+    }
+
+    .right span {
+      vertical-align: middle;
+    }
+
+    .right input {
+      vertical-align: baseline;
+    }
+  </style>
+
+  <title>Example and tutorial: Simple synth keyboard - The_video_keyboard - code sample</title>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="keyboard">
+
+      <div class="octave">
+        <div class="key" data-octave="3" data-note="C" data-frequency="130.8127826502993">
+          <div>C<sub>3</sub></div>
+        </div>
+        <div class="key" data-octave="3" data-note="D" data-frequency="146.8323839587038">
+          <div>D<sub>3</sub></div>
+        </div>
+        <div class="key" data-octave="3" data-note="E" data-frequency="164.81377845643496">
+          <div>E<sub>3</sub></div>
+        </div>
+        <div class="key" data-octave="3" data-note="F" data-frequency="174.61411571650194">
+          <div>F<sub>3</sub></div>
+        </div>
+        <div class="key" data-octave="3" data-note="G" data-frequency="195.99771799087463">
+          <div>G<sub>3</sub></div>
+        </div>
+        <div class="key" data-octave="3" data-note="A" data-frequency="220">
+          <div>A<sub>3</sub></div>
+        </div>
+        <div class="key" data-octave="3" data-note="B" data-frequency="246.94165062806206">
+          <div>B<sub>3</sub></div>
+        </div>
+      </div>
+      <div class="octave">
+        <div class="key" data-octave="4" data-note="C" data-frequency="261.6255653005986">
+          <div>C<sub>4</sub></div>
+        </div>
+        <div class="key" data-octave="4" data-note="D" data-frequency="293.6647679174076">
+          <div>D<sub>4</sub></div>
+        </div>
+        <div class="key" data-octave="4" data-note="E" data-frequency="329.6275569128699">
+          <div>E<sub>4</sub></div>
+        </div>
+        <div class="key" data-octave="4" data-note="F" data-frequency="349.2282314330039">
+          <div>F<sub>4</sub></div>
+        </div>
+        <div class="key" data-octave="4" data-note="G" data-frequency="391.99543598174927">
+          <div>G<sub>4</sub></div>
+        </div>
+        <div class="key" data-octave="4" data-note="A" data-frequency="440">
+          <div>A<sub>4</sub></div>
+        </div>
+        <div class="key" data-octave="4" data-note="B" data-frequency="493.8833012561241">
+          <div>B<sub>4</sub></div>
+        </div>
+      </div>
+      <div class="octave">
+        <div class="key" data-octave="5" data-note="C" data-frequency="523.2511306011972">
+          <div>C<sub>5</sub></div>
+        </div>
+        <div class="key" data-octave="5" data-note="D" data-frequency="587.3295358348151">
+          <div>D<sub>5</sub></div>
+        </div>
+        <div class="key" data-octave="5" data-note="E" data-frequency="659.2551138257398">
+          <div>E<sub>5</sub></div>
+        </div>
+        <div class="key" data-octave="5" data-note="F" data-frequency="698.4564628660078">
+          <div>F<sub>5</sub></div>
+        </div>
+        <div class="key" data-octave="5" data-note="G" data-frequency="783.9908719634985">
+          <div>G<sub>5</sub></div>
+        </div>
+        <div class="key" data-octave="5" data-note="A" data-frequency="880">
+          <div>A<sub>5</sub></div>
+        </div>
+        <div class="key" data-octave="5" data-note="B" data-frequency="987.7666025122483">
+          <div>B<sub>5</sub></div>
+        </div>
+      </div>
+      
+      
+      
+    </div>
+  </div>
+  
+  <div class="settingsBar">
+    <div class="left">
+      <span>Volume: </span>
+      <input type="range" min="0.0" max="1.0" step="0.01" value="0.5" list="volumes" name="volume">
+      <datalist id="volumes">
+        <option value="0.0" label="Mute">
+        </option>
+        <option value="1.0" label="100%">
+        </option>
+      </datalist>
+    </div>
+    <div class="right">
+      <span>Current waveform: </span>
+      <select name="waveform">
+        <option value="sine">Sine</option>
+        <option value="square" selected="">Square</option>
+        <option value="sawtooth">Sawtooth</option>
+        <option value="triangle">Triangle</option>
+        <option value="custom">Custom</option>
+      </select>
+    </div>
+  </div>
+<!-- 
+
+
+
+</body>
+
+</html>
