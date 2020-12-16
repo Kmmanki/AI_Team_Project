@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pickle 
 import datetime
-CHUNK = 11025 
+CHUNK = 22050 
 RATE = 44100 
 SR = 44100
 OFFSET = 48
@@ -78,9 +78,18 @@ def preprocessing(data):
         tmp_avg = np.average(pitch_mag[np.where(pitch_freq == freq_uniq[i])]) # 48을 가진 index 들을 모두 가져와서 avg
         tmp_arr.append(tmp_avg)
 
+
+    # plt.figure(figsize=(16,10))
+    # plt.bar([i for i in range(48, 85 )] ,tmp_arr)
+    # # plt.plot(SCALE,result)
+    # # plt.savefig('./03.png', dpi=50)
+    # # print("한 번 출력까지 걸린 시간 : ",datetime.datetime.now() - start_time)
+    # plt.show()
+
+
     #백색소음일 때의 파워 값은 대략 8 내외 8보다 작으면 소리 입력이 없는 것으로 판단.
     #소리가 있다면 predict
-    if max(pitch_mag) < 15:
+    if max(pitch_mag) < 5:
         result = np.array(tmp_arr)
         return result, False
     else:
@@ -90,13 +99,7 @@ def preprocessing(data):
 
 
  
-    # plt.figure(figsize=(16,10))
-    # plt.xlim([0,6])
-    # plt.ylim([-1,2])
-    # # plt.plot(left_f,left_spectrum)
-    # plt.plot(SCALE,result)
-    # plt.savefig('./03.png', dpi=50)
-    # print("한 번 출력까지 걸린 시간 : ",datetime.datetime.now() - start_time)
+
 
 if __name__ == '__main__':
 

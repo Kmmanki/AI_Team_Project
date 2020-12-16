@@ -6,8 +6,8 @@ import pickle
 import datetime
 from sklearn import preprocessing
 
-x = np.load('./npy/all_scale_x_11025sr.npy')
-y = np.load('./npy/all_scale_y_11025sr.npy')
+x = np.load('./npy/all_scale_x_final.npy')
+y = np.load('./npy/all_scale_y_final.npy')
 
 
 print(x[0])

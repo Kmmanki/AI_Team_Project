@@ -34,8 +34,6 @@ def build_model(optimizer = Adam,  epochs = 100,
                 patience = 5, layer_num = 2, nodes = 32, activation = Activation('relu'), 
                 kernel_init = 'he_normal', k_reg = regularizers.l1, k_reg_param = 0.001,
                 lr = 0.001, dropout = 0.1
-                
-                
                  ):
     model = Sequential()
     model.add(Dense(128,  input_shape=(x_train.shape[1],)))
@@ -157,12 +155,4 @@ bE.model.save('./test.h5')
 
 print(bE.model.evaluate((x_test, y_test))
 
-'''
-
-acc 0.8468112945556641
-loss 0.6237873435020447
-'''
-'''
-
-'''
 

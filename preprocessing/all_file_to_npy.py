@@ -7,7 +7,8 @@ FIG_SIZE = (8,6)
 
 SR = 11025
 def convertFregToPitch(arr):
-    return np.round(39.86*np.log10(arr/440.0) + 69.0) #수 많은 소수점 들을 하나로 합치게 해줌. Ex 130.8 130.9 130.10 을 전부 130 => 48로 단일화 즉 값들이 48로 몰링
+     #수 많은 소수점 들을 하나로 합치게 해줌. Ex 130.8 130.9 130.10 을 전부 130 => 48로 단일화 
+    return np.round(39.86*np.log10(arr/440.0) + 69.0)
 convertFregToPitch2 = np.vectorize(convertFregToPitch)
 
 def search(dirname):
@@ -28,8 +29,7 @@ def search(dirname):
         full_filename = os.path.join(dirname, filename)
         full_filename = full_filename.replace('\\', '/')
         
-        #리브로사를 사용하여 wav를 로드, 시작 1초간 소리가 없기 때문에 1초 후부터 시작 
-        sig, sr = librosa.load(full_filename, sr=SR, offset=1.0)
+        sig, sr = librosa.load(full_filename, sr=SR)
 
         # 복소공간 값 절댓갑 취해서, magnitude 구하기
         fft = np.fft.fft(sig)
@@ -46,7 +46,7 @@ def search(dirname):
         # print(left_spectrum.shape) #108427
         pitch_index = np.where((left_f > 130.0) & (left_f < 1050.0)) #130 ~ 1050 헤르츠의 index 구함
         pitch_freq = left_f[pitch_index] 
-        pitch_mag = left_spectrum[pitch_index] 
+        pitch_mag = left_spectrum[pitch_index]
         # print(left_spectrum.shape) # 9000컬럼
 
         #주파수를 midi번호로 변경 Ex) 130.0 -> 48
@@ -57,8 +57,6 @@ def search(dirname):
         pitch_freq = pitch_freq[start_index]
         pitch_mag = pitch_mag[start_index]
 
-
-        #여러 미디번호들이 있지만 유니크로 보여주며 유니크 이전엔 48 48 48 48 48 48 48 이런식으로 있을 것이고 해당 인덱스로 주면 mag를 얻는다.
         freq_uniq = np.unique(pitch_freq) 
 
         #y 값을 평균으로 미디번호를 단일화
@@ -84,7 +82,7 @@ def search(dirname):
         # plt.show()
         # print (y_label)
         num += 1
-        if num %10 == 0:
+        if num %100 == 0:
             print(str(num)+'번째 파일')
     return np.array(x_arr), np.array(y_arr)
 

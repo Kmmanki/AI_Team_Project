@@ -5,13 +5,11 @@ from lightgbm import LGBMClassifier
 import datetime
 import pickle
 
-x = np.load('./npy/all_scale_x_11025sr.npy')
-y = np.load('./npy/all_scale_y_11025sr.npy')
-x_predict = np.load('./npy/mag_tmp.npy')
+x = np.load('./npy/all_scale_x_final.npy')
+y = np.load('./npy/all_scale_y_final.npy')
 
 print(x.shape)
 
-x_predict = x_predict.reshape(1, x_predict.shape[0])
 
 #train, test, val 을 구분하기 위한 train_test_split
 x_train, x_test ,y_train , y_test= train_test_split(x, y, train_size = 0.6)
@@ -29,11 +27,9 @@ model.fit(x_train, y_train, early_stopping_rounds=40,
             )
 end_time = datetime.datetime.now()
 
-y_predict = model.predict(x_predict)
 
 print("총 데이터의 개수", x.shape[0])
 print("score", model.score(x_test, y_test))
-print("내가 만든 wav는 48번인데 predict는???? ", y_predict)
 print("fit 소요 시간",end_time - start_time)
 
 #lgbm 모델 저장.
