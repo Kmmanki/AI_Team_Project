@@ -75,7 +75,7 @@ def main():
             y_predict = MODEL.predict(x_predict)
             result = live_to_scale.transe(y_predict)
             print(result)
-            if result == '미':
+            if result == '미' :
                 is_go_up = True
                 is_bottom = False
         # dino move

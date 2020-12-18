@@ -16,8 +16,8 @@ from tensorflow.keras import regularizers
 from tensorflow.keras.optimizers import Adam, RMSprop, Adagrad
 
 
-x = np.load('./npy/all_scale_x_11025sr.npy')
-y = np.load('./npy/all_scale_y_11025sr.npy')
+x = np.load('./npy/all_scale_x_final.npy')
+y = np.load('./npy/all_scale_y_final.npy')
 x_predict = np.load('./npy/mag_tmp.npy')
 y = y - 48
 # y = to_categorical(y)
@@ -107,7 +107,7 @@ def create_hyperparameter():
                     0.003, 0.002, 0.001,
                     0.03, 0.05, 0.06
                     ]
-    return    { 
+    return      { 
         'batch_size': batchs, 
         'optimizer' : optimizer,  'epochs' : epochs, 'loss' : loss,
         'patience' : patience, 'layer_num' : layer_num, 'nodes' : nodes, 
@@ -119,32 +119,29 @@ def create_hyperparameter():
         'dropout': dropout
     }
 
-ealystopping = EarlyStopping(monitor='val_loss',patience=30, mode='auto')
-
-reduce_lr = ReduceLROnPlateau(monitor='val_loss', patience=30,
-                            factor=0.5, verbose=1)
 
 hyperparameter = create_hyperparameter()
 model = KerasClassifier(build_fn=build_model, verbose=1)
-
 search = RandomizedSearchCV(model, hyperparameter, cv=3 )
 
-strart_time = datetime.datetime.now()
+
+ealystopping = EarlyStopping(monitor='val_loss',patience=30, mode='auto')
+reduce_lr = ReduceLROnPlateau(monitor='val_loss', patience=30,
+                            factor=0.5, verbose=1)
 
 search.fit(x_train, y_train, validation_data=(x_val, y_val), 
         callbacks=[ealystopping, reduce_lr])
 
-print('학습 종료시간: ', datetime.datetime.now() - strart_time)
-acc=search.score(x_test, y_test)
 # search.save('./model/modelLoad/modelFolder/Dense_model1_11025sr.h5')
 
 import pickle
 
 
-print("acc",acc)
 # print("loss",loss)
 bE = search.best_estimator_
-print('best_estimator.score', bE.score(x_test, y_test) )
+loss, acc =bE.model.evaluate((x_test, y_test))
+print('loss : ' ,loss)
+print("acc: ",acc)
 
 print('최적의 파라미터 : ', search.best_params_)
 # pickle.dump(search.best_estimator_ ,open( './model/modelLoad/modelFolder/Dense_model1_wappingkeras_11025sr.pickle', 'wb'))
@@ -153,6 +150,6 @@ bE.model.save('./test.h5')
 # search.save('./test.h5')
 
 
-print(bE.model.evaluate((x_test, y_test))
-
-
+# print(bE.model.evaluate((x_test, y_test))
+'''
+'''
