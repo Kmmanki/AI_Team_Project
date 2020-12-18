@@ -10,6 +10,22 @@
 
 <br>
 
+# 최종 ppt (설명을 추가하여 다시 올릴 것 )
+<details>
+
+  <summary>
+      
+     펼치기/접기
+      
+  </summary>
+    ![1218161233911042](https://user-images.githubusercontent.com/50133267/102585728-3fe19380-414c-11eb-8cde-b47e27e65c3e.jpg)
+    ![1218161151373672](https://user-images.githubusercontent.com/50133267/102585737-4243ed80-414c-11eb-995e-211fa66f30dc.jpg)
+
+</details>
+<br>
+-----
+<br>
+
 
 ## preprocessing 모듈
 
